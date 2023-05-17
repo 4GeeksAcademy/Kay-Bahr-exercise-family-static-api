@@ -9,20 +9,33 @@ update this file to implement the following already declared methods:
 from random import randint
 
 class FamilyStructure:
-    def __init__(self, first_name, last_name, age, lucky_numbers):
-        self.first_name = first_name
+    def __init__(self, last_name):
         self.last_name = last_name
-        self.age = age
-        self.lucky_numbers = lucky_numbers
 
         # example list of members
-        self._members = [{
-            id: self._generateId(),
-            first_name: first_name,
-            last_name: last_name,
-            age: age,
-            lucky_numbers: lucky_numbers
-        }]
+        self._members = [
+            {
+                'id': self._generateId(),
+                'first_name': 'John',
+                'last_name': last_name,
+                'age': 33,
+                'lucky_numbers': [7, 13, 22]
+            },
+            {
+                'id': self._generateId(),
+                'first_name': 'Jane',
+                'last_name': last_name,
+                'age': 35,
+                'lucky_numbers': [10, 14, 3]
+            },
+            {
+                'id': self._generateId(),
+                'first_name': 'Jimmy',
+                'last_name': last_name,
+                'age': 5,
+                'lucky_numbers': [1]
+            }
+        ]
 
     # read-only: Use this method to generate random members ID's when adding members into the list
     def _generateId(self):
@@ -31,7 +44,8 @@ class FamilyStructure:
     def add_member(self, member):
         # fill this method and update the return
         ## append the member to the list of _members
-
+        member['last_name'] = self.last_name
+        member['id'] = member._generateId()
         self._members.append(member)
 
     def delete_member(self, id):
@@ -39,9 +53,10 @@ class FamilyStructure:
         ## loop the list and delete the member with the given id
 
         for member in self._members: 
-            if member.id == id:
+            if member['id'] == id:
                 self._member.remove(member)
-                break
+                return True
+            return False
             
 
     def update_member(self, id, new_member):
@@ -57,8 +72,9 @@ class FamilyStructure:
         # fill this method and update the return
         ## loop all the members and return the one with the given id
         for member in self._members: 
-            if member.id == id:
+            if member['id'] == id:
                 return member
+            return None
 
     # this method is done, it returns a list with all the family members
     def get_all_members(self):

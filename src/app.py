@@ -26,17 +26,106 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/members', methods=['GET'])
-def handle_hello():
+def handle_get_all_members():
+    try:   
+        members = jackson_family.get_all_members()
+        
+        if len(members) == 0:
+            # If there are no members in the database, return 404 Not Found
+            raise APIException('No members found', status_code=404)
+        
+        response_body = members
 
-    # this is how you can use the Family datastructure by calling its methods
-    members = jackson_family.get_all_members()
-    response_body = {
-        "hello": "world",
-        "family": members
-    }
+        return jsonify(response_body), 200
+    except Exception as e:
+        # Handle any other exceptions and return 500 Internal Server Error
+        raise APIException('Internal Server Error', status_code=500)
 
 
-    return jsonify(response_body), 200
+
+@app.route('/member/<id>', methods=['GET'])
+def handle_get_member(id):
+    try:
+        member = jackson_family.get_member(id)
+        if member is None:
+            raise APIException('Member not found', status_code=404)
+
+        response_body = { member.to_dict() }
+        return jsonify(response_body), 200
+    except Exception as e:
+        raise APIException('Internal Server Error', status_code=500)
+
+
+@app.route('/member', methods=['POST'])
+def handle_add_member():
+    try:
+        member = request.get_json()
+
+        if member is None:
+            raise APIException("You need to specify the request body as a JSON object", status_code=400)
+        if 'first_name' not in member:
+            raise APIException('You need to specify the first name', status_code=400)
+        if 'age' not in member:
+            raise APIException('You need to specify the age', status_code=400)
+        if 'lucky_numbers' not in member:
+            raise APIException('You need to specify the lucky numbers', status_code=400)
+        if 'last_name' not in member or member['last_name'] != 'Jackson':
+            raise APIException('You need to have the last name Jackson', status_code=400)
+
+        jackson_family.add_member(member)
+
+        response_body = {
+            member
+        }
+        return jsonify(response_body), 200
+    except Exception as e:
+        raise APIException('Internal Server Error', status_code=500)
+
+    
+
+@app.route('/member/<id>', methods=['PUT'])
+def handle_update_member(id):
+    try:
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a JSON object", status_code=400)
+        if 'first_name' not in body:
+            raise APIException('You need to specify the first name', status_code=400)
+        if 'age' not in body:
+            raise APIException('You need to specify the age', status_code=400)
+        if 'lucky_numbers' not in body:
+            raise APIException('You need to specify the lucky numbers', status_code=400)
+
+        member = jackson_family.get_member(id)
+        if member is None:
+            raise APIException('Member not found', status_code=404)
+
+        member.first_name = body['first_name']
+        member.age = body['age']
+        member.lucky_numbers = body['lucky_numbers']
+
+        response_body = { member.to_dict() }
+        return jsonify(response_body), 200
+    except Exception as e:
+
+        raise APIException('Internal Server Error', status_code=500)
+    
+@app.route('/member/<id>', methods=['DELETE'])
+def handle_delete_member(id):
+    try:
+        member = jackson_family.get_member(id)
+        if member is None:
+            raise APIException('Member not found', status_code=404)
+
+        else: jackson_family.delete_member(id)
+
+        response_body = { 'done': True }
+        return jsonify(response_body), 200
+    except Exception as e:
+        raise APIException('Internal Server Error', status_code=500)
+
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
