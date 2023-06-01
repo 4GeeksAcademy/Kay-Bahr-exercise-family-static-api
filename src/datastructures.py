@@ -60,11 +60,11 @@ class FamilyStructure:
 
     def update_member(self, id, new_member):
         # Loop through the list of members
-        for i, member in enumerate(self._members):
-            if member.id == id:
+        for member in self._members:
+            if member['id'] == id:
                 # Replace the member with the given ID
-                self._members[i] = new_member
-                break
+                self._members[id] = new_member
+        return None
 
 
     def get_member(self, id):
