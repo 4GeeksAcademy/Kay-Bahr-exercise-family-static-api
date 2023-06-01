@@ -70,10 +70,10 @@ class FamilyStructure:
     def get_member(self, id):
         # fill this method and update the return
         ## loop all the members and return the one with the given id
-        for member in self._members: 
+        for member in self._members:
             if member['id'] == id:
                 return member
-            return None
+        return None
 
     # this method is done, it returns a list with all the family members
     def get_all_members(self):

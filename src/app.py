@@ -45,7 +45,7 @@ def handle_get_member(id):
     if member is None:
         raise APIException('Member not found', status_code=404)
 
-    return jsonify({ member.to_dict() }), 200
+    return jsonify({member}), 200
 
 
 @app.route('/member', methods=['POST'])
