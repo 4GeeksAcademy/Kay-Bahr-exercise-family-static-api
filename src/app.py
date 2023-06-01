@@ -45,7 +45,7 @@ def handle_get_member(id):
     if member is None:
         raise APIException('Member not found', status_code=404)
 
-    return jsonify({member}), 200
+    return jsonify(member), 200
 
 
 @app.route('/member', methods=['POST'])
@@ -86,7 +86,7 @@ def handle_update_member(id):
     member.age = body['age']
     member.lucky_numbers = body['lucky_numbers']
 
-    return jsonify({ member.to_dict() }), 200
+    return jsonify(member), 200
     
 @app.route('/member/<int:id>', methods=['DELETE'])
 def handle_delete_member(id):
